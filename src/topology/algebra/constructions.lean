@@ -34,7 +34,7 @@ variables [topological_space M]
 continuous_induced_dom
 
 @[continuity, to_additive] lemma continuous_op : continuous (op : M → Mᵐᵒᵖ) :=
-continuous_induced_rng continuous_id
+continuous_induced_rng.2 continuous_id
 
 /-- `mul_opposite.op` as a homeomorphism. -/
 @[to_additive "`add_opposite.op` as a homeomorphism.", simps]

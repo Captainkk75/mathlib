@@ -228,13 +228,20 @@ end pointwise_limits
 ⟨hf.continuous_iff.2 $ by simpa only [(∘), map_mul f]
   using (hf.continuous.fst'.mul hf.continuous.snd')⟩
 
-namespace submonoid
+@[to_additive] lemma has_continuous_mul_induced {M N F : Type*} [has_mul M] [has_mul N]
+  [mul_hom_class F M N] [topological_space N] [has_continuous_mul N] (f : F) :
+  @has_continuous_mul M (induced f ‹_›) _ :=
+by { letI := induced f ‹_›, exact inducing.has_continuous_mul f ⟨rfl⟩ }
 
-@[to_additive] instance [topological_space α] [monoid α] [has_continuous_mul α] (S : submonoid α) :
+@[to_additive] instance subsemigroup.has_continuous_mul [topological_space M] [semigroup M]
+  [has_continuous_mul M] (S : subsemigroup M) :
   has_continuous_mul S :=
-inducing.has_continuous_mul S.subtype ⟨rfl⟩
+inducing.has_continuous_mul (⟨coe, λ _ _, rfl⟩ : mul_hom S M) ⟨rfl⟩
 
-end submonoid
+@[to_additive] instance submonoid.has_continuous_mul [topological_space M] [monoid M]
+  [has_continuous_mul M] (S : submonoid M) :
+  has_continuous_mul S :=
+S.to_subsemigroup.has_continuous_mul
 
 section has_continuous_mul
 

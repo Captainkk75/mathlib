@@ -2010,6 +2010,13 @@ infinite.of_surjective (coe : list α → multiset α) (surjective_quot_mk _)
 instance [infinite α] : infinite (option α) :=
 infinite.of_injective some (option.some_injective α)
 
+-- really we only need one infinite and the others inhabited
+instance {π : α → Sort*} [∀ i, infinite $ π i] [nonempty α] : infinite (Π i : α, π i) :=
+infinite.of_injective
+  (λ (i : π (classical.arbitrary α)) t,
+    if h : t = classical.arbitrary α then cast (congr_arg π h.symm) i else classical.arbitrary _)
+  (λ x y h, by simpa using congr_fun h (classical.arbitrary α))
+
 instance sum.infinite_of_left [infinite α] : infinite (α ⊕ β) :=
 infinite.of_injective sum.inl sum.inl_injective
 

@@ -337,6 +337,11 @@ begin
   exact nontrivial_of_ne (single default x) 0 (mt single_eq_zero.1 hx)
 end
 
+-- really we only need one infinite and the others inhabited
+instance [infinite M] [nonempty α] : infinite (α →₀ M) :=
+infinite.of_injective (λ i, finsupp.single (classical.arbitrary _) i)
+  (finsupp.single_injective (classical.arbitrary _))
+
 lemma unique_single [unique α] (x : α →₀ M) : x = single default (x default) :=
 ext $ unique.forall_iff.2 single_eq_same.symm
 

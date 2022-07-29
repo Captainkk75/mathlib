@@ -1459,7 +1459,7 @@ begin
     refine eventually.mono (is_open.mem_nhds (is_open_ne.prod is_open_ne) ⟨hx, hx⟩) _,
     rintro ⟨y, z⟩ ⟨hy, hz⟩,
     simp only [mem_set_of_eq] at hy hz, -- hy : y ≠ 0, hz : z ≠ 0
-    field_simp [hx, hy, hz], ring, },
+    field_simp, ring, },
   refine (is_O_refl (λ p : 𝕜 × 𝕜, p.1 - p.2) _).mul_is_o ((is_o_one_iff _).2 _),
   rw [← sub_self (x * x)⁻¹],
   exact tendsto_const_nhds.sub ((continuous_mul.tendsto (x, x)).inv₀ $ mul_ne_zero hx hx)

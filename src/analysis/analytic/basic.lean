@@ -164,7 +164,7 @@ begin
   rw [← div_lt_one this] at rt,
   refine ⟨_, rt, C, or.inr zero_lt_one, λ n, _⟩,
   calc |∥p n∥ * r ^ n| = (∥p n∥ * t ^ n) * (r / t) ^ n :
-    by field_simp [mul_right_comm, abs_mul, this.ne']
+    by field_simp [mul_right_comm, abs_mul]
   ... ≤ C * (r / t) ^ n : mul_le_mul_of_nonneg_right (hC n) (pow_nonneg (div_nonneg r.2 t.2) _)
 end
 
@@ -527,7 +527,7 @@ begin
   assume n,
   calc ∥(p n) (λ (i : fin n), y)∥ ≤ ∥p n∥ * (∏ i : fin n, ∥y∥) :
       continuous_multilinear_map.le_op_norm _ _
-    ... = (∥p n∥ * r' ^ n) * (∥y∥ / r') ^ n : by field_simp [hr'0.ne', mul_right_comm]
+    ... = (∥p n∥ * r' ^ n) * (∥y∥ / r') ^ n : by field_simp [mul_right_comm]
     ... ≤ (C * a ^ n) * (∥y∥ / r') ^ n :
       mul_le_mul_of_nonneg_right (hp n) (pow_nonneg (div_nonneg (norm_nonneg _) r'.coe_nonneg) _)
     ... ≤ C * (a * (∥y∥ / r')) ^ n : by rw [mul_pow, mul_assoc]

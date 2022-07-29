@@ -242,7 +242,7 @@ begin
     calc ∥φ x - 1∥ * ∥u x∥
             ≤ (c/2) / C * ∥u x∥ : mul_le_mul_of_nonneg_right hφx.le (norm_nonneg $ u x)
         ... ≤ (c/2) / C * (C*∥v x∥) : mul_le_mul_of_nonneg_left hCuvx (div_pos (by linarith) hC).le
-        ... = c/2 * ∥v x∥ : by {field_simp [hC.ne.symm], ring},
+        ... = c/2 * ∥v x∥ : by {field_simp, ring},
 
   calc ∥((λ (x : α), φ x • u x) - v) x∥
           = ∥(φ x - 1) • u x + (u x - v x)∥ : by simp [sub_smul, sub_add]

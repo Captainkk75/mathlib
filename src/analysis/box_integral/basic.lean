@@ -565,7 +565,7 @@ begin
         dist (∑ J in π₀.boxes, integral_sum f vol (πi J)) (∑ J in π₀.boxes, integral J l f vol) :
     dist_triangle _ _ _
   ... ≤ (ε + δ') + ∑ J in π₀.boxes, δ' : add_le_add this (dist_sum_sum_le_of_le _ hπiδ')
-  ... = ε + δ : by { field_simp [H0.ne'], ring }
+  ... = ε + δ : by { field_simp, ring }
 end
 
 /-- **Henstock-Sacks inequality**. Let `r : ℝⁿ → (0, ∞)` be a function such that for any tagged

@@ -73,7 +73,7 @@ variable [floor_ring K]
 protected lemma comp_exact_value_correctness_of_stream_eq_some_aux_comp {a : K} (b c : K)
   (fract_a_ne_zero : int.fract a ≠ 0) :
   ((⌊a⌋ : K) * b + c) / (int.fract a) + b = (b * a + c) / int.fract a :=
-by { field_simp [fract_a_ne_zero], rw int.fract, ring }
+by { field_simp, rw int.fract, ring }
 
 open generalized_continued_fraction
   (comp_exact_value comp_exact_value_correctness_of_stream_eq_some_aux_comp)

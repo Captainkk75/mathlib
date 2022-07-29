@@ -28,15 +28,15 @@ begin
   { ring_nf at this ⊢, linarith },
   set a := (z - y) / (z - x),
   set b := (y - x) / (z - x),
-  have hy : a • x + b • z = y, by { field_simp, rw div_eq_iff; [ring, linarith] },
+  have hy : a • x + b • z = y, by { field_simp, ring },
   have key, from
     hf.2 hx hz
       (show 0 ≤ a, by apply div_nonneg; linarith)
       (show 0 ≤ b, by apply div_nonneg; linarith)
-      (show a + b = 1, by { field_simp, rw div_eq_iff; [ring, linarith] }),
+      (show a + b = 1, by field_simp),
   rw hy at key,
   replace key := mul_le_mul_of_nonneg_left key hxz.le,
-  field_simp [hxy.ne', hyz.ne', hxz.ne', mul_comm (z - x) _] at key ⊢,
+  field_simp [mul_comm (z - x) _] at key ⊢,
   rw div_le_div_right,
   { linarith },
   { nlinarith }
@@ -67,13 +67,13 @@ begin
   { ring_nf at this ⊢, linarith },
   set a := (z - y) / (z - x),
   set b := (y - x) / (z - x),
-  have hy : a • x + b • z = y, by { field_simp, rw div_eq_iff; [ring, linarith] },
+  have hy : a • x + b • z = y, by { field_simp, ring },
   have key, from
     hf.2 hx hz hxz' (div_pos hyz hxz) (div_pos hxy hxz)
-      (show a + b = 1, by { field_simp, rw div_eq_iff; [ring, linarith] }),
+      (show a + b = 1, by field_simp),
   rw hy at key,
   replace key := mul_lt_mul_of_pos_left key hxz,
-  field_simp [hxy.ne', hyz.ne', hxz.ne', mul_comm (z - x) _] at key ⊢,
+  field_simp [mul_comm (z - x) _] at key ⊢,
   rw div_lt_div_right,
   { linarith },
   { nlinarith }

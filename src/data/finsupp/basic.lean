@@ -337,7 +337,6 @@ begin
   exact nontrivial_of_ne (single default x) 0 (mt single_eq_zero.1 hx)
 end
 
--- really we only need one infinite and the others inhabited
 instance [infinite M] [nonempty α] : infinite (α →₀ M) :=
 infinite.of_injective _ $ finsupp.single_injective $ classical.arbitrary α
 

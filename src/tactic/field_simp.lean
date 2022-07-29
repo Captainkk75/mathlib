@@ -5,7 +5,7 @@ Authors: Sébastien Gouëzel
 -/
 
 import tactic.interactive
-import tactic.norm_num
+import tactic.positivity
 
 /-!
 # `field_simp` tactic
@@ -16,11 +16,12 @@ Tactic to clear denominators in algebraic expressions, based on `simp` with a sp
 namespace tactic
 
 /-- Try to prove a goal of the form `x ≠ 0` by calling `assumption`, or `norm_num1` if `x` is
-a numeral. -/
+a numeral, or `positivity` to see whether `0 < x`. -/
 meta def field_simp.ne_zero : tactic unit := do
   goal ← tactic.target,
   match goal with
-  | `(%%e ≠ 0) := assumption <|> do n ← e.to_rat, `[norm_num1]
+  | `(%%e ≠ 0) := assumption <|> (do n ← e.to_rat, `[norm_num1])
+      <|> `[apply ne_of_gt, positivity]
   | _ := tactic.fail "goal should be of the form `x ≠ 0`"
   end
 
@@ -58,7 +59,8 @@ invocation, check the denominators of the resulting expression and provide proof
 nonzero to enable further progress.
 
 To check that denominators are nonzero, `field_simp` will look for facts in the context, and
-will try to apply `norm_num` to close numerical goals.
+will try to apply `norm_num` to close numerical goals, and will see if the denominator is
+obviously positive by calling `positivity`.
 
 The invocation of `field_simp` removes the lemma `one_div` from the simpset, as this lemma
 works against the algorithm explained above. It also removes

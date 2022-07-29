@@ -339,8 +339,7 @@ end
 
 -- really we only need one infinite and the others inhabited
 instance [infinite M] [nonempty α] : infinite (α →₀ M) :=
-infinite.of_injective (λ i, finsupp.single (classical.arbitrary _) i)
-  (finsupp.single_injective (classical.arbitrary _))
+infinite.of_injective _ $ finsupp.single_injective $ classical.arbitrary α
 
 lemma unique_single [unique α] (x : α →₀ M) : x = single default (x default) :=
 ext $ unique.forall_iff.2 single_eq_same.symm

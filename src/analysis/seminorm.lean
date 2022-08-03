@@ -67,6 +67,8 @@ instance zero_hom_class : zero_hom_class (add_group_seminorm E) E ℝ :=
 /-- Helper instance for when there's too many metavariables to apply `fun_like.has_coe_to_fun`. -/
 instance : has_coe_to_fun (add_group_seminorm E) (λ _, E → ℝ) := ⟨λ p, p.to_fun⟩
 
+@[simp] lemma to_fun_eq_coe (p : add_group_seminorm E) : p.to_fun = p := rfl
+
 @[ext] lemma ext {p q : add_group_seminorm E} (h : ∀ x, (p : E → ℝ) x = q x) : p = q :=
 fun_like.ext p q h
 
@@ -90,8 +92,6 @@ protected lemma nonneg : 0 ≤ p x := p.nonneg' _
 protected lemma add_le : p (x + y) ≤ p x + p y := p.add_le' _ _
 @[simp] protected lemma neg : p (- x) = p x := p.neg' _
 
-lemma add_group_seminorm_apply (x : E) : p x = p.to_fun x := rfl
-
 variable (E)
 
 /-- The trivial norm on an additive group `E` is the `add_group_seminorm` taking value `0` at `0`
@@ -113,7 +113,7 @@ def trivial_norm [decidable_eq E] : add_group_seminorm E :=
 variable {E}
 
 lemma trivial_norm_of_ne_zero [decidable_eq E] {z : E} (h : z ≠ 0) : trivial_norm E z = 1 :=
-by simp only [trivial_norm, add_group_seminorm_apply, h, if_false]
+by simp only [trivial_norm, ← to_fun_eq_coe, h, if_false]
 
 /-- Any action on `ℝ` which factors through `ℝ≥0` applies to an `add_group_seminorm`. -/
 instance [has_smul R ℝ] [has_smul R ℝ≥0] [is_scalar_tower R ℝ≥0 ℝ] :

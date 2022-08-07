@@ -409,7 +409,48 @@ namespace is_artinian_ring
 
 open is_artinian
 
-variables {R : Type*} [comm_ring R] [is_artinian_ring R]
+variables {R : Type*}
+
+section ring
+
+variables [ring R] [is_artinian_ring R]
+
+lemma ideals_stabilise (r : R) :
+  ∃ n : ℕ, ∀ m, n ≤ m → ideal.span {r ^ n} = ideal.span ({r ^ m} : set R) :=
+monotone_stabilizes ⟨λ t, order_dual.to_dual (ideal.span ({r ^ t} : set R)),
+λ a b hab, begin
+  obtain ⟨c, rfl⟩ := nat.exists_eq_add_of_le hab,
+  simp only [order_dual.to_dual_le_to_dual],
+  refine ideal.span_le.mpr _,
+  rintro s hs,
+  obtain rfl := mem_singleton_iff.mp hs,
+  rw [set_like.mem_coe, ideal.mem_span_singleton'],
+  exact ⟨r ^ c, by simp [←pow_add, add_comm]⟩
+end⟩
+
+-- this only works in the commutative case I think T_T
+theorem is_unit_or_eq_zero {R : Type*} [ring R] [is_artinian_ring R] [no_zero_divisors R] (r : R) :
+  r = 0 ∨ is_unit r :=
+begin
+  nontriviality R,
+  refine or_iff_not_imp_left.mpr (λ hr, _),
+  obtain ⟨n, hn⟩ := ideals_stabilise r,
+  specialize hn n.succ n.le_succ,
+  have : ({r ^ n} : set R) ⊆ ↑(ideal.span {r ^ n}) := ideal.subset_span,
+  rw [singleton_subset_iff, set_like.mem_coe, hn, ideal.mem_span_singleton', pow_succ] at this,
+  obtain ⟨s, hk⟩ := this,
+  nth_rewrite 1 ←one_mul (r ^ n) at hk,
+  rwa [←mul_assoc, ←sub_eq_zero, ←sub_mul, mul_eq_zero,
+       or_iff_left (pow_ne_zero n hr), sub_eq_zero] at hk,
+  sorry,
+end
+
+
+end ring
+
+section comm_ring
+
+variables [comm_ring R] [is_artinian_ring R]
 
 lemma is_nilpotent_jacobson_bot : is_nilpotent (ideal.jacobson (⊥ : ideal R)) :=
 begin
@@ -477,5 +518,7 @@ into metavariables. However, this is safe. -/
 instance : is_artinian_ring (localization S) := localization_artinian S _
 
 end localization
+
+end comm_ring
 
 end is_artinian_ring

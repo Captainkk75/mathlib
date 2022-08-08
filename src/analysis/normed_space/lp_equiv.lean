@@ -26,20 +26,17 @@ We keep this as a separate file so that the various $$L^p$$ space files don't im
 
 open_locale ennreal
 
-variables {α : Type*} [fintype α] {E : α → Type*} [Π i, normed_add_comm_group (E i)] (p : ℝ≥0∞)
-
-/-- When `α` is a `fintype`, every `f : pre_lp E p` satisfies `mem_ℓp f p`. -/
-lemma mem_ℓp.all (f : Π i, E i) : mem_ℓp f p :=
+variables {α : Type*} {E : α → Type*} [Π i, normed_add_comm_group (E i)] (p : ℝ≥0∞)
+/-- When `α` is `finite`, every `f : pre_lp E p` satisfies `mem_ℓp f p`. -/
+lemma mem_ℓp.all [finite α] (f : Π i, E i) : mem_ℓp f p :=
 begin
   rcases p.trichotomy with (rfl | rfl | h),
   { exact mem_ℓp_zero_iff.mpr {i : α | f i ≠ 0}.to_finite, },
   { exact mem_ℓp_infty_iff.mpr (set.finite.bdd_above (set.range (λ (i : α), ∥f i∥)).to_finite) },
-  { rw [mem_ℓp_gen_iff h, summable_iff_vanishing_norm],
-    refine λ ε hε, ⟨finset.univ, λ s hs, _⟩,
-    simp only [disjoint, finset.inf_eq_inter, finset.inter_univ, finset.bot_eq_empty,
-      finset.le_eq_subset, finset.subset_empty] at hs,
-    rwa [hs, finset.sum_empty, norm_zero], }
+  { casesI nonempty_fintype α, exact mem_ℓp_gen ⟨finset.univ.sum _, has_sum_fintype _⟩ }
 end
+
+variables [fintype α]
 
 /-- The canonical `equiv` between `lp E p ≃ pi_Lp p E` when `E : α → Type u` with `[fintype α]`. -/
 def equiv.lp_pi_Lp : lp E p ≃ pi_Lp p E :=

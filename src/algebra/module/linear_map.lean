@@ -209,13 +209,13 @@ initialize_simps_projections linear_map (to_fun → apply)
   ((linear_map.mk f h₁ h₂ : M →ₛₗ[σ] M₃) : M → M₃) = f := rfl
 
 /-- Identity map as a `linear_map` -/
-def id : M →ₗ[R] M :=
+protected def id : M →ₗ[R] M :=
 { to_fun := id, ..distrib_mul_action_hom.id R }
 
 lemma id_apply (x : M) :
-  @id R M _ _ _ x = x := rfl
+  @linear_map.id R M _ _ _ x = x := rfl
 
-@[simp, norm_cast] lemma id_coe : ((linear_map.id : M →ₗ[R] M) : M → M) = _root_.id := rfl
+@[simp, norm_cast] lemma id_coe : ((linear_map.id : M →ₗ[R] M) : M → M) = id := rfl
 
 end
 
@@ -423,10 +423,10 @@ include σ₁₃
 @[simp, norm_cast] lemma coe_comp : (f.comp g : M₁ → M₃) = f ∘ g := rfl
 omit σ₁₃
 
-@[simp] theorem comp_id : f.comp id = f :=
+@[simp] theorem comp_id : f.comp linear_map.id = f :=
 linear_map.ext $ λ x, rfl
 
-@[simp] theorem id_comp : id.comp f = f :=
+@[simp] theorem id_comp : linear_map.id.comp f = f :=
 linear_map.ext $ λ x, rfl
 
 variables {f g} {f' : M₂ →ₛₗ[σ₂₃] M₃} {g' : M₁ →ₛₗ[σ₁₂] M₂}
@@ -792,7 +792,7 @@ variables [semiring R] [add_comm_monoid M] [add_comm_group N₁] [module R M] [m
 instance : has_one (module.End R M) := ⟨linear_map.id⟩
 instance : has_mul (module.End R M) := ⟨linear_map.comp⟩
 
-lemma one_eq_id : (1 : module.End R M) = id := rfl
+lemma one_eq_id : (1 : module.End R M) = linear_map.id := rfl
 lemma mul_eq_comp (f g : module.End R M) : f * g = f.comp g := rfl
 
 @[simp] lemma one_apply (x : M) : (1 : module.End R M) x = x := rfl

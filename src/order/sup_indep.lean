@@ -250,7 +250,7 @@ lemma independent_empty (t : empty → α) : independent t.
 lemma independent_pempty (t : pempty → α) : independent t.
 
 /-- If the elements of a set are independent, then any pair within that set is disjoint. -/
-lemma independent.pairwise_disjoint : pairwise (disjoint on t) :=
+lemma independent.pairwise_disjoint : pairwise_disjoint t :=
 λ x y h, disjoint_Sup_right (ht x) ⟨y, supr_pos h.symm⟩
 
 lemma independent.mono
@@ -374,9 +374,9 @@ lemma set_independent_iff_pairwise_disjoint {s : set α} :
 
 alias set_independent_iff_pairwise_disjoint ↔ _ _root_.set.pairwise_disjoint.set_independent
 
-lemma independent_iff_pairwise_disjoint {f : ι → α} : independent f ↔ pairwise (disjoint on f) :=
+lemma independent_iff_pairwise_disjoint {f : ι → α} : independent f ↔ pairwise_disjoint f :=
 ⟨independent.pairwise_disjoint, λ hs i, disjoint_supr_iff.2 $ λ j, disjoint_supr_iff.2 $ λ hij,
-  hs _ _ hij.symm⟩
+  hs hij.symm⟩
 
 end complete_lattice
 

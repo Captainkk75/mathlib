@@ -48,23 +48,23 @@ end
 
 /-- If `α` is a linear succ order, `β` is a preorder, and `f : α → β` is a monotone function, then
 the intervals `set.Ioc (f n) (f (order.succ n))` are pairwise disjoint. -/
-lemma pairwise_disjoint_on_Ioc_succ [succ_order α] [preorder β] {f : α → β} (hf : monotone f) :
-  pairwise (disjoint on (λ n, Ioc (f n) (f (succ n)))) :=
-(pairwise_disjoint_on _).2 $ λ m n hmn x ⟨⟨_, h₁⟩, ⟨h₂, _⟩⟩, h₂.not_le $
+lemma pairwise_disjoint_Ioc_succ [succ_order α] [preorder β] {f : α → β} (hf : monotone f) :
+  pairwise_disjoint (λ n, Ioc (f n) (f (succ n))) :=
+pairwise_disjoint_iff_lt.2 $ λ m n hmn x ⟨⟨_, h₁⟩, ⟨h₂, _⟩⟩, h₂.not_le $
   h₁.trans $ hf $ succ_le_of_lt hmn
 
 /-- If `α` is a linear succ order, `β` is a preorder, and `f : α → β` is a monotone function, then
 the intervals `set.Ico (f n) (f (order.succ n))` are pairwise disjoint. -/
-lemma pairwise_disjoint_on_Ico_succ [succ_order α] [preorder β] {f : α → β} (hf : monotone f) :
+lemma pairwise_disjoint_Ico_succ [succ_order α] [preorder β] {f : α → β} (hf : monotone f) :
   pairwise (disjoint on (λ n, Ico (f n) (f (succ n)))) :=
-(pairwise_disjoint_on _).2 $ λ m n hmn x ⟨⟨_, h₁⟩, ⟨h₂, _⟩⟩, h₁.not_le $
+pairwise_disjoint_iff_lt.2 $ λ m n hmn x ⟨⟨_, h₁⟩, ⟨h₂, _⟩⟩, h₁.not_le $
   (hf $ succ_le_of_lt hmn).trans h₂
 
 /-- If `α` is a linear succ order, `β` is a preorder, and `f : α → β` is a monotone function, then
 the intervals `set.Ioo (f n) (f (order.succ n))` are pairwise disjoint. -/
-lemma pairwise_disjoint_on_Ioo_succ [succ_order α] [preorder β] {f : α → β} (hf : monotone f) :
-  pairwise (disjoint on (λ n, Ioo (f n) (f (succ n)))) :=
-hf.pairwise_disjoint_on_Ico_succ.mono $ λ i j h, h.mono Ioo_subset_Ico_self Ioo_subset_Ico_self
+lemma pairwise_disjoint_Ioo_succ [succ_order α] [preorder β] {f : α → β} (hf : monotone f) :
+  pairwise_disjoint (λ n, Ioo (f n) (f (succ n))) :=
+hf.pairwise_disjoint_Ico_succ.mono $ λ i j h, h.mono Ioo_subset_Ico_self Ioo_subset_Ico_self
 
 /-- If `α` is a linear pred order, `β` is a preorder, and `f : α → β` is a monotone function, then
 the intervals `set.Ioc (f order.pred n) (f n)` are pairwise disjoint. -/

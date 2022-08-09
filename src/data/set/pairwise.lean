@@ -29,43 +29,56 @@ open set function
 variables {α β γ ι ι' : Type*} {r p q : α → α → Prop}
 
 section pairwise
-variables {f g : ι → α} {s t u : set α} {a b : α}
+variables {f g : ι → α}
 
 /-- A relation `r` holds pairwise if `r i j` for all `i ≠ j`. -/
-def pairwise (r : α → α → Prop) := ∀ i j, i ≠ j → r i j
+def pairwise (r : α → α → Prop) := ∀ ⦃i j⦄, i ≠ j → r i j
 
 lemma pairwise.mono (hr : pairwise r) (h : ∀ ⦃i j⦄, r i j → p i j) : pairwise p :=
-λ i j hij, h $ hr i j hij
+λ i j hij, h $ hr hij
 
 lemma pairwise_on_bool (hr : symmetric r) {a b : α} : pairwise (r on (λ c, cond c a b)) ↔ r a b :=
 by simpa [pairwise, function.on_fun] using @hr a b
 
-lemma pairwise_disjoint_on_bool [semilattice_inf α] [order_bot α] {a b : α} :
-  pairwise (disjoint on (λ c, cond c a b)) ↔ disjoint a b :=
-pairwise_on_bool disjoint.symm
-
-lemma symmetric.pairwise_on [linear_order ι] (hr : symmetric r) (f : ι → α) :
+lemma symmetric.pairwise_on [linear_order ι] (hr : symmetric r) {f : ι → α} :
   pairwise (r on f) ↔ ∀ m n, m < n → r (f m) (f n) :=
-⟨λ h m n hmn, h m n hmn.ne, λ h m n hmn, begin
-  obtain hmn' | hmn' := hmn.lt_or_lt,
-  { exact h _ _ hmn' },
-  { exact hr (h _ _ hmn') }
-end⟩
-
-lemma pairwise_disjoint_on [semilattice_inf α] [order_bot α] [linear_order ι] (f : ι → α) :
-  pairwise (disjoint on f) ↔ ∀ m n, m < n → disjoint (f m) (f n) :=
-symmetric.pairwise_on disjoint.symm f
-
-lemma pairwise_disjoint.mono [semilattice_inf α] [order_bot α]
-  (hs : pairwise (disjoint on f)) (h : g ≤ f) : pairwise (disjoint on g) :=
-hs.mono (λ i j hij, disjoint.mono (h i) (h j) hij)
+⟨λ h m n hmn, h hmn.ne, λ h m n hmn, hmn.lt_or_lt.elim (h m n) (λ hmn, hr $ h n m hmn)⟩
 
 lemma function.injective_iff_pairwise_ne : injective f ↔ pairwise ((≠) on f) :=
 forall₂_congr $ λ i j, not_imp_not.symm
 
 alias function.injective_iff_pairwise_ne ↔ function.injective.pairwise_ne _
 
+end pairwise
+
+section pairwise_disjoint
+
+variables [semilattice_inf α] [order_bot α] {f g : ι → α} {a b : α}
+
+/-- An indexed family `f : ι → α` of elements of a meet-semilattice with bottom element (e.g., sets)
+is said to be pairwise disjoint if `f i` is disjoint with `f j` whenever `i ≠ j`. -/
+def pairwise_disjoint (f : ι → α) : Prop := pairwise (disjoint on f)
+
+protected lemma pairwise_disjoint.pairwise (h : pairwise_disjoint f) : pairwise (disjoint on f) := h
+
+lemma pairwise_disjoint_on_bool : pairwise_disjoint (λ c, cond c a b) ↔ disjoint a b :=
+pairwise_on_bool disjoint.symm
+
+lemma pairwise_disjoint_iff_lt [linear_order ι] {f : ι → α} :
+  pairwise_disjoint f ↔ ∀ m n, m < n → disjoint (f m) (f n) :=
+symmetric_disjoint.pairwise_on
+
+lemma pairwise_disjoint.mono (hf : pairwise_disjoint f) (h : g ≤ f) : pairwise_disjoint g :=
+hf.mono $ λ i j hij, hij.mono (h i) (h j)
+
+lemma pairwise_disjoint_fiber (f : ι → α) : pairwise_disjoint (λ a : α, f ⁻¹' {a}) :=
+λ a b hab x hx, hab $ hx.1.symm.trans hx.2
+
+end pairwise_disjoint
+
 namespace set
+
+variables {s t : set α} {a b : α} {f : ι → α}
 
 /-- The relation `r` holds pairwise on the set `s` if `r x y` for all *distinct* `x y ∈ s`. -/
 protected def pairwise (s : set α) (r : α → α → Prop) := ∀ ⦃x⦄, x ∈ s → ∀ ⦃y⦄, y ∈ s → x ≠ y → r x y
@@ -221,16 +234,14 @@ by { rw [sUnion_eq_Union, pairwise_Union (h.directed_coe), set_coe.forall], refl
 
 end set
 
-lemma pairwise.set_pairwise (h : pairwise r) (s : set α) : s.pairwise r := λ x hx y hy, h x y
-
-end pairwise
+lemma pairwise.set_pairwise (h : pairwise r) (s : set α) : s.pairwise r := λ x hx y hy hxy, h hxy
 
 lemma pairwise_subtype_iff_pairwise_set {α : Type*} (s : set α) (r : α → α → Prop) :
   pairwise (λ (x : s) (y : s), r x y) ↔ s.pairwise r :=
 begin
   split,
   { assume h x hx y hy hxy,
-    exact h ⟨x, hx⟩ ⟨y, hy⟩ (by simpa only [subtype.mk_eq_mk, ne.def]) },
+    exact @h ⟨x, hx⟩ ⟨y, hy⟩ (by simpa only [subtype.mk_eq_mk, ne.def]) },
   { rintros h ⟨x, hx⟩ ⟨y, hy⟩ hxy,
     simp only [subtype.mk_eq_mk, ne.def] at hxy,
     exact h hx hy hxy }
@@ -418,6 +429,3 @@ begin
 end
 
 end set
-
-lemma pairwise_disjoint_fiber (f : ι → α) : pairwise (disjoint on (λ a : α, f ⁻¹' {a})) :=
-set.pairwise_univ.1 $ set.pairwise_disjoint_fiber f univ
